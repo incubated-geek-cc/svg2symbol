@@ -7,5 +7,5 @@
 #### Preview of Web Application
 ![Web App Preview Onload](https://github.com/incubated-geek-cc/svg2symbol/blob/main/public/img/preview.png)
 
-#### Preview of Web Application - Displaying embedded code snippets for each icon gengerated
+#### Displaying embedded code snippets for each icon gengerated
 ![Web App Preview View Code](https://github.com/incubated-geek-cc/svg2symbol/blob/main/public/img/preview_2.png)
