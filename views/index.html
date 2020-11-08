@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Svg2Symbol App</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -14,17 +14,23 @@
       <p>
         <img id="logo" src="img/logo.png" alt="logo" />
         <img id="banner" src="img/banner.png" alt="svg2symbol app" />
+        <input id="importBtn" type="file" multiple />
         <button id="convertBtn" class="btn btn-primary" type="button" onclick="importFile()">
           <span>
-            Import files.svg <svg class="icon icon-svg-file"><use xlink:href="img/symbol-defs.svg#icon-svg-file"></use></svg>
+            <small>Import</small>
+            <svg style="background:transparent;display:inline-block;height:1.5em;padding:0;margin:0;fill:#ffffff" viewBox="0 0 550.801 550.801" xmlns="http://www.w3.org/2000/svg">
+               <path d="M488.426 197.019H475.2v-63.816c0-.398-.063-.799-.116-1.202-.021-2.534-.827-5.023-2.562-6.995L366.325 3.694c-.032-.031-.063-.042-.085-.076-.633-.707-1.371-1.295-2.151-1.804a9.495 9.495 0 00-.706-.419 11.131 11.131 0 00-2.131-.896c-.2-.056-.38-.138-.58-.19A10.774 10.774 0 00358.193 0H97.2C85.282 0 75.6 9.693 75.6 21.601v175.413H62.377c-17.049 0-30.873 13.818-30.873 30.873v160.545c0 17.043 13.824 30.87 30.873 30.87h13.224V529.2c0 11.907 9.682 21.601 21.6 21.601h356.4c11.907 0 21.6-9.693 21.6-21.601V419.302h13.226c17.044 0 30.871-13.827 30.871-30.87v-160.54c-.001-17.054-13.828-30.873-30.872-30.873zM97.2 21.605h250.193v110.513c0 5.967 4.841 10.8 10.8 10.8H453.6v54.108H97.2V21.605zm241.671 204.067L284.545 386.96h-42.591l-51.69-161.288h39.967l19.617 68.196c5.508 19.143 10.531 37.567 14.36 57.67h.717c4.061-19.385 9.089-38.527 14.592-56.953l20.585-68.918h38.77v.005zM68.458 379.54l7.415-30.153c9.811 5.021 24.888 10.051 40.439 10.051 16.751 0 25.607-6.935 25.607-17.465 0-10.052-7.662-15.795-27.05-22.734-26.8-9.328-44.263-24.168-44.263-47.611 0-27.524 22.971-48.579 61.014-48.579 18.188 0 31.591 3.823 41.159 8.131l-8.126 29.437c-6.465-3.116-17.945-7.657-33.745-7.657-15.791 0-23.454 7.183-23.454 15.552 0 10.296 9.089 14.842 29.917 22.731 28.468 10.536 41.871 25.365 41.871 48.094 0 27.042-20.812 50.013-65.09 50.013-18.421-.001-36.614-4.779-45.694-9.81zm385.143 143.813H97.2V419.302h356.4v104.051zm35.31-143.813c-11.243 3.823-32.537 9.103-53.831 9.103-29.437 0-50.73-7.426-65.57-21.779-14.839-13.875-22.971-34.942-22.738-58.625.253-53.604 39.255-84.235 92.137-84.235 20.81 0 36.852 4.073 44.74 7.896l-7.657 29.202c-8.859-3.829-19.849-6.95-37.567-6.95-30.396 0-53.357 17.233-53.357 52.173 0 33.265 20.81 52.882 50.73 52.882 8.375 0 15.072-.96 17.94-2.395v-33.745h-24.875v-28.471h60.049v84.944h-.001z"/>
+            </svg>
           </span>
         </button>
         <button id="saveSymbolsBtn" class="btn btn-info" type="button" onclick="getSVGDefsToSave()">
           <span>
-            Export symbol-defs.svg <svg class="icon icon-download"><use xlink:href="img/symbol-defs.svg#icon-download"></use></svg>
+            <svg style="background:transparent;display:inline-block;height:1.5em;padding:0;margin:0;fill:#ffffff" viewBox="0 0 30 32" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.857 24q0-0.464-0.339-0.804t-0.804-0.339-0.804 0.339-0.339 0.804 0.339 0.804 0.804 0.339 0.804-0.339 0.339-0.804zM27.429 24q0-0.464-0.339-0.804t-0.804-0.339-0.804 0.339-0.339 0.804 0.339 0.804 0.804 0.339 0.804-0.339 0.339-0.804zM29.714 20v5.714q0 0.714-0.5 1.214t-1.214 0.5h-26.286q-0.714 0-1.214-0.5t-0.5-1.214v-5.714q0-0.714 0.5-1.214t1.214-0.5h8.304l2.411 2.429q1.036 1 2.429 1t2.429-1l2.429-2.429h8.286q0.714 0 1.214 0.5t0.5 1.214zM23.911 9.839q0.304 0.732-0.25 1.25l-8 8q-0.321 0.339-0.804 0.339t-0.804-0.339l-8-8q-0.554-0.518-0.25-1.25 0.304-0.696 1.054-0.696h4.571v-8q0-0.464 0.339-0.804t0.804-0.339h4.571q0.464 0 0.804 0.339t0.339 0.804v8h4.571q0.75 0 1.054 0.696z"></path>
+            </svg> 
+            <small>symbol-defs.svg</small>
           </span>
         </button>
-        <input id="importBtn" type="file" multiple />
       </p>
     </div>
   </div>
@@ -33,7 +39,6 @@
       <div id="results" class="col-sm-12"></div>
     </div>
   </div>
-  <script defer type="text/javascript" src="js/svgxuse.js"></script>
   <script type="text/javascript" src="js/polyfill.js"></script>
   <script type="text/javascript" src="js/bootstrap-native.js"></script>
   <script type="text/javascript" src="js/prism.js"></script>

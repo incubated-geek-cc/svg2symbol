@@ -51,7 +51,7 @@ api.options("/convert-to-symbol", function(req, res) {
     data = data
       .replace(/></g, ">\n<")
       .replace(/id=""/g, "")
-      .replace(/\s{2,}/gm, "")
+      .replace(/\s{2,}/gm, " ")
       .replace(/"(?:\s{1,})/gm, "\" ");
     res.type("json").status(200).send({
       symbol: data,

@@ -3,7 +3,6 @@ function enablePopovers() {
 
   Array.from(popoverTargets).map(
     popTarget => new BSN.Popover(popTarget, {
-      placement: "right",
       animation: "show",
       delay: 100,
       dismissible: true,
@@ -76,7 +75,7 @@ function readMultiFiles(files) {
 
         var filecontent=e.target.result;
 
-        convert(filename,filecontent);
+        convert(filename,filecontent,null);
         readFile(index+1);
       };
       fileReader.readAsBinaryString(file);
@@ -86,7 +85,7 @@ function readMultiFiles(files) {
 };
 
 
-function convert(fileName,svgCode) {
+function convert(fileName,svgCode,iconTimestamp) {
   var url = "/api/convert-to-symbol";
   var paramsObj = {
     svgData: svgCode
@@ -94,7 +93,7 @@ function convert(fileName,svgCode) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      elaborateResult(this.response,fileName);
+      elaborateResult(this.response,fileName,iconTimestamp);
     } else if(this.readyState == 4) {
       console.log("Error");
     }
@@ -104,7 +103,11 @@ function convert(fileName,svgCode) {
   xhttp.send(JSON.stringify(paramsObj));
 }
 
-function elaborateResult(response,fileName) {
+function elaborateResult(response,fileName,iconTimestamp) {
+  if(fileName.substring(0,5) !== "icon-") {
+    fileName="icon-"+fileName;
+  }
+
   response=JSON.parse(response);
   let symbol=response["symbol"];
   let input=response["input"];
@@ -114,7 +117,7 @@ function elaborateResult(response,fileName) {
   let data = {
     symbol: null,
     icon: null,
-    htmlExample: null
+    symbolCode: null
   };
   let rawSymbolCode=symbol;
   rawSymbolCode=rawSymbolCode.replace("<symbol ", "<symbol id=\""+uuid+"\" ").replace(/<title>.*<\/title>\s/, "");
@@ -126,7 +129,7 @@ function elaborateResult(response,fileName) {
   let symbolCode = rawSymbolCode.split("\n");
   symbolCode.shift();
   symbolCode.pop();
-  symbolCode = symbolCode.join("\n ");
+  symbolCode = symbolCode.join("\n  ");
 
   data.symbol = symbol;
   data.icon = icon;
@@ -138,13 +141,11 @@ function elaborateResult(response,fileName) {
   let year=now.getFullYear();
   let month=now.getMonth();
   let days=now.getDate();
-
   let datestamp=year+ "-" +(month>=10 ? month : "0"+month) +"-"+ (days>=10 ? days : "0"+days);
 
   let hours=now.getHours();
   let minutes=now.getMinutes();
   let seconds=now.getSeconds();
-
   let timing=(hours>=10 ? hours : "0"+hours)+":"+(minutes>=10 ? minutes : "0"+minutes)+":"+(seconds>=10 ? seconds : "0"+seconds);
 
   // display results to users properly
@@ -153,7 +154,7 @@ function elaborateResult(response,fileName) {
     symbol: compiledSamples.symbol,
     icon: compiledSamples.icon,
     symbolCode: compiledSamples.symbolCode,
-    timestamp: datestamp + " " + timing,
+    timestamp: (iconTimestamp==null) ? ("Created at: "+datestamp+" "+timing) : iconTimestamp,
     name: uuid
   });
 
@@ -186,7 +187,49 @@ function deleteItemFromResults(index) {
   checkResultsArray();
 }
 
+
+
+
+function htmlSanitiser(input) {
+  let entities={
+    "/":"&sol;",
+    "<":"&lt;",
+    ">":"&gt;",
+    "\"":"&quot;",
+    "'":"&apos;",
+    ".":"&period;",
+    ":":"&colon;",
+    "\\":"&bsol;",
+    "&":"&#38;",
+    "=":"&equals;",
+    "+":"&plus;"
+  };
+  let result=input;
+  for(let e in entities) {
+      result=result.replaceAll(e,entities[e]);
+  }
+  return result;
+}
+
+var correctLen=31;
 function renderThumbnail(result,index) {
+  let len=(result.timestamp).length;
+
+  if(len<correctLen) {
+    let padding=(0.0).toPrecision(correctLen-len+11);
+    padding=padding.replaceAll("0","&nbsp;").replaceAll(".","&nbsp;");
+    result.timestamp=result.timestamp+padding;
+  }
+
+
+  let symbolCodeHtmlStr=result.symbolCode;
+  symbolCodeHtmlStr=htmlSanitiser(symbolCodeHtmlStr);
+  symbolCodeHtmlStr="<pre><code>"+symbolCodeHtmlStr+"</code></pre>";
+
+  let iconCodeHtmlStr=result.icon;
+  iconCodeHtmlStr=htmlSanitiser(iconCodeHtmlStr);
+  iconCodeHtmlStr="<pre><code>"+iconCodeHtmlStr+"</code></pre>";
+
   let htmlStr="";
   htmlStr+="<div id='thumbnail_"+index+"' class='col-xs-6 col-md-3'>";
   htmlStr+="<svg class=\"svg_symbol_defs\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
@@ -194,7 +237,7 @@ function renderThumbnail(result,index) {
   htmlStr+=result.symbolCode;
   htmlStr+="</defs>";
   htmlStr+="</svg>";
-  htmlStr+="<span class='btn btn-link' style='text-decoration:none;cursor:default'><small>Created at: " + result.timestamp +"</small>";
+  htmlStr+="<span class='btn btn-link' style='text-decoration:none;cursor:default'><small>" + result.timestamp +"</small>";
 
   htmlStr+="<a class='thumbnail'>";
   htmlStr+="<button class='btn btn-xs btn-danger rounded-circle pull-right' onclick='deleteItemFromResults("+index+")'>×</button>";
@@ -203,21 +246,21 @@ function renderThumbnail(result,index) {
   htmlStr+="</div>";
   htmlStr+="<button type=\"button\" class=\"btn btn-link\" data-toggle=\"popover\" data-title=\"Code Preview: <kbd>" + result.name + "</kbd>\" data-dismissible=\"true\" data-placement=\"right\" data-content='<div class=\"row\">";
   htmlStr+="<div class=\"col-sm-12\">";
+
   htmlStr+="<h4><b><small>Symbol Definition(s)</small></b></h4>";
-  htmlStr+="<textarea class=\"code\" rows=\"5\" disabled>";
-  htmlStr+=result.symbolCode;
-  htmlStr+="</textarea>";
+  htmlStr+=symbolCodeHtmlStr;
+
   htmlStr+="</div>";
   htmlStr+="</div>";
   htmlStr+="<div class=\"row\">";
   htmlStr+="<div class=\"col-sm-12\">";
   htmlStr+="<h4><b><small>HTML(SVG(Use))</small></b></h4>";
-  htmlStr+="<textarea class=\"code\" rows=\"2\" disabled>";
-  htmlStr+=result.icon;
-  htmlStr+="</textarea>";
+
+  htmlStr+=iconCodeHtmlStr;
+
   htmlStr+="</div>";
   htmlStr+="</div>'>";
-  htmlStr+="<svg class=\"icon icon-code\"><use xlink:href=\"img/symbol-defs.svg#icon-code\"></use></svg> View Code";
+  htmlStr+="&lt;&sol;&gt; View Code";
   htmlStr+="</button>";
   htmlStr+="</div>";
   htmlStr+="</a>";
@@ -248,25 +291,25 @@ function loadSamples() {
   samples["icon-check"]=str;
 
   str="";
-  str+="<svg viewBox=\"0 0 32 21\" xmlns=\"http://www.w3.org/2000/svg\">";
+  str+="<svg viewBox=\"0 0 21 32\" xmlns=\"http://www.w3.org/2000/svg\">";
   str+="\r\t<path xmlns=\"http://www.w3.org/2000/svg\" d=\"M5.714 13.714h9.143v-3.429q0-1.893-1.339-3.232t-3.232-1.339-3.232 1.339-1.339 3.232v3.429zM20.571 15.429v10.286q0 0.714-0.5 1.214t-1.214 0.5h-17.143q-0.714 0-1.214-0.5t-0.5-1.214v-10.286q0-0.714 0.5-1.214t1.214-0.5h0.571v-3.429q0-3.286 2.357-5.643t5.643-2.357 5.643 2.357 2.357 5.643v3.429h0.571q0.714 0 1.214 0.5t0.5 1.214z\"/>";
   str+="\r</svg>";
   samples["icon-lock"]=str;
 
   str="";
-  str+="<svg viewBox=\"0 0 32 25\" xmlns=\"http://www.w3.org/2000/svg\">";
+  str+="<svg viewBox=\"0 0 25 32\" xmlns=\"http://www.w3.org/2000/svg\">";
   str+="\r\t<path xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.857 20.571v2.286h-2.286v-2.286h2.286zM6.857 6.857v2.286h-2.286v-2.286h2.286zM20.571 6.857v2.286h-2.286v-2.286h2.286zM2.286 25.125h6.857v-6.839h-6.857v6.839zM2.286 11.429h6.857v-6.857h-6.857v6.857zM16 11.429h6.857v-6.857h-6.857v6.857zM11.429 16v11.429h-11.429v-11.429h11.429zM20.571 25.143v2.286h-2.286v-2.286h2.286zM25.143 25.143v2.286h-2.286v-2.286h2.286zM25.143 16v6.857h-6.857v-2.286h-2.286v6.857h-2.286v-11.429h6.857v2.286h2.286v-2.286h2.286zM11.429 2.286v11.429h-11.429v-11.429h11.429zM25.143 2.286v11.429h-11.429v-11.429h11.429z\"/>";
   str+="\r</svg>";
   samples["icon-qrcode"]=str;
   
   str="";
-  str+="<svg viewBox=\"0 0 32 32\" xmlns=\"http://www.w3.org/2000/svg\">";
+  str+="<svg viewBox=\"0 0 18 32\" xmlns=\"http://www.w3.org/2000/svg\">";
   str+="<path xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.714 11.429q0-1.893-1.339-3.232t-3.232-1.339-3.232 1.339-1.339 3.232 1.339 3.232 3.232 1.339 3.232-1.339 1.339-3.232zM18.286 11.429q0 1.946-0.589 3.196l-6.5 13.821q-0.286 0.589-0.848 0.929t-1.205 0.339-1.205-0.339-0.83-0.929l-6.518-13.821q-0.589-1.25-0.589-3.196 0-3.786 2.679-6.464t6.464-2.679 6.464 2.679 2.679 6.464z\"/>";
   str+="\r</svg>";
   samples["icon-map-marker"]=str;
 
   for(let s in samples) {
-    convert(s, samples[s]);
+    convert(s,samples[s],"Sample Icon");
   }
 }
 
@@ -279,7 +322,7 @@ function getSVGDefsToSave() {
 
   for(var r in results) {
     var result=results[r];
-    var symbolNode=result.symbolCode.replaceAll("xmlns=\"http://www.w3.org/2000/svg\"","");
+    var symbolNode=result.symbolCode;
     svg_defs_to_save+="\r\t\t"+symbolNode;
   }
 
