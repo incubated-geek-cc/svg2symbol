@@ -254,8 +254,18 @@ textarea {
 
 #banner,
 #logo {
+  display:auto;
   height:50px;
   margin-right:20px;
+}
+
+@media only screen and (max-width: 600px) {
+  #banner {
+    display:none;
+  }
+  #logo {
+    margin-right:5px;
+  }
 }
 
 .popover {
