@@ -984,8 +984,16 @@
         navbarFixedBottom,
         placementClass;
     function dismissibleHandler(e) {
-      if (popover !== null && e.target === queryElement('.close',popover)) {
-        self.hide();
+      if (popover !== null) {
+        let toHide=false;
+        if(e.toElement.classList.contains("close") || e.srcElement.offsetParent.nodeName==="BODY") {
+          toHide=true;
+        } else if(!e.srcElement.offsetParent.offsetParent.classList.contains("popover") && !e.srcElement.offsetParent.classList.contains("popover")) {
+            toHide=true;
+        }
+        if(toHide) {
+          self.hide();
+        }
       }
     }
     function getContents() {
@@ -1048,7 +1056,9 @@
       if (ops.trigger === 'hover') {
         element[action]( mouseClickEvents.down, self.show );
         element[action]( mouseHoverEvents[0], self.show );
-        if (!ops.dismissible) { element[action]( mouseHoverEvents[1], self.hide ); }
+        if (!ops.dismissible) { 
+          element[action]( mouseHoverEvents[1], self.hide ); 
+        }
       } else if ('click' == ops.trigger) {
         element[action]( ops.trigger, self.toggle );
       } else if ('focus' == ops.trigger) {

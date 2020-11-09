@@ -12,12 +12,29 @@ function enablePopovers() {
 }
 enablePopovers();
 
+var yearDisplay=document.getElementById("yearDisplay");
 var convertBtn=document.getElementById("convertBtn");
 var importBtn=document.getElementById("importBtn");
 var loadSampleBtn=document.getElementById("loadSampleBtn");
 var saveSymbolsBtn=document.getElementById("saveSymbolsBtn");
 
 var results=[];
+
+function generateTimestamp() {
+  let now=new Date();
+  let year=now.getFullYear();
+  let month=now.getMonth();
+  let days=now.getDate();
+  let datestamp=year+ "-" +(month>=10 ? month : "0"+month) +"-"+ (days>=10 ? days : "0"+days);
+
+  let hours=now.getHours();
+  let minutes=now.getMinutes();
+  let seconds=now.getSeconds();
+  let timing=(hours>=10 ? hours : "0"+hours)+":"+(minutes>=10 ? minutes : "0"+minutes)+":"+(seconds>=10 ? seconds : "0"+seconds);
+
+  return (datestamp+" "+timing);
+}
+yearDisplay.innerHTML=generateTimestamp();
 
 function deepCopyObj(obj) {
   let resultObj={};
@@ -31,19 +48,6 @@ function replaceAll(input,searchStr,replaceStr) {
   input=input.split(searchStr);
   input=input.join(replaceStr);
   return input;
-}
-
-function generateUid() {
-  let result="";
-  let str=replaceAll(uuid.bin().toString(),",","-");
-  for(let i in str) {
-    if(i%2==0) {
-      result+="x";
-    } else {
-      result+=str[i];
-    }
-  }
-  return "icon-"+result;
 }
 
 function importFile() {
@@ -111,7 +115,7 @@ function elaborateResult(response,fileName,iconTimestamp) {
   response=JSON.parse(response);
   let symbol=response["symbol"];
   let input=response["input"];
-  let uuid = (fileName==null) ? generateUid() : fileName;
+  let uuid = fileName;
   let svg = input;
   
   let data = {
@@ -137,24 +141,13 @@ function elaborateResult(response,fileName,iconTimestamp) {
 
   let compiledSamples = deepCopyObj(data);
 
-  let now=new Date();
-  let year=now.getFullYear();
-  let month=now.getMonth();
-  let days=now.getDate();
-  let datestamp=year+ "-" +(month>=10 ? month : "0"+month) +"-"+ (days>=10 ? days : "0"+days);
-
-  let hours=now.getHours();
-  let minutes=now.getMinutes();
-  let seconds=now.getSeconds();
-  let timing=(hours>=10 ? hours : "0"+hours)+":"+(minutes>=10 ? minutes : "0"+minutes)+":"+(seconds>=10 ? seconds : "0"+seconds);
-
   // display results to users properly
   results.unshift({
     svg: svg,
     symbol: compiledSamples.symbol,
     icon: compiledSamples.icon,
     symbolCode: compiledSamples.symbolCode,
-    timestamp: (iconTimestamp==null) ? ("Created at: "+datestamp+" "+timing) : iconTimestamp,
+    timestamp: (iconTimestamp==null) ? ("<svg style=\"background:transparent;display:inline-block;height:1em;padding:0;margin:0;fill:#7E18A7\" viewBox=\"0 0 32 32\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M16 9.714v8q0 0.25-0.161 0.411t-0.411 0.161h-5.714q-0.25 0-0.411-0.161t-0.161-0.411v-1.143q0-0.25 0.161-0.411t0.411-0.161h4v-6.286q0-0.25 0.161-0.411t0.411-0.161h1.143q0.25 0 0.411 0.161t0.161 0.411zM23.429 16q0-2.643-1.304-4.875t-3.536-3.536-4.875-1.304-4.875 1.304-3.536 3.536-1.304 4.875 1.304 4.875 3.536 3.536 4.875 1.304 4.875-1.304 3.536-3.536 1.304-4.875zM27.429 16q0 3.732-1.839 6.884t-4.991 4.991-6.884 1.839-6.884-1.839-4.991-4.991-1.839-6.884 1.839-6.884 4.991-4.991 6.884-1.839 6.884 1.839 4.991 4.991 1.839 6.884z\"></path></svg> "+generateTimestamp()) : iconTimestamp,
     name: uuid
   });
 
@@ -188,8 +181,6 @@ function deleteItemFromResults(index) {
 }
 
 
-
-
 function htmlSanitiser(input) {
   let entities={
     "/":"&sol;",
@@ -200,9 +191,12 @@ function htmlSanitiser(input) {
     ".":"&period;",
     ":":"&colon;",
     "\\":"&bsol;",
-    "&":"&#38;",
+    "&":"&amp;",
     "=":"&equals;",
-    "+":"&plus;"
+    "+":"&plus;",
+    "-":"&minus;",
+    "#":"&num;",
+    "%":"&percnt;"
   };
   let result=input;
   for(let e in entities) {
@@ -211,7 +205,7 @@ function htmlSanitiser(input) {
   return result;
 }
 
-var correctLen=31;
+var correctLen=21;
 function renderThumbnail(result,index) {
   let len=(result.timestamp).length;
 
@@ -220,7 +214,6 @@ function renderThumbnail(result,index) {
     padding=padding.replaceAll("0","&nbsp;").replaceAll(".","&nbsp;");
     result.timestamp=result.timestamp+padding;
   }
-
 
   let symbolCodeHtmlStr=result.symbolCode;
   symbolCodeHtmlStr=htmlSanitiser(symbolCodeHtmlStr);
@@ -231,24 +224,30 @@ function renderThumbnail(result,index) {
   iconCodeHtmlStr="<pre><code>"+iconCodeHtmlStr+"</code></pre>";
 
   let htmlStr="";
-  htmlStr+="<div id='thumbnail_"+index+"' class='col-xs-6 col-md-3'>";
+  htmlStr+="<div id='thumbnail_"+index+"' class='col-xs-6 col-md-3 text-center'>";
   htmlStr+="<svg class=\"svg_symbol_defs\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
   htmlStr+="<defs>";
   htmlStr+=result.symbolCode;
   htmlStr+="</defs>";
   htmlStr+="</svg>";
-  htmlStr+="<span class='btn btn-link' style='text-decoration:none;cursor:default'><small>" + result.timestamp +"</small>";
+  htmlStr+="<span class='btn btn-link thumbnail-title'>";
+  
+  
+  htmlStr+= "<small>"+result.timestamp +"</small></span>";
+
 
   htmlStr+="<a class='thumbnail'>";
   htmlStr+="<button class='btn btn-xs btn-danger rounded-circle pull-right' onclick='deleteItemFromResults("+index+")'>×</button>";
-  htmlStr+="<div class='icon'>";
+  
   htmlStr+=result.icon;
-  htmlStr+="</div>";
+
+  htmlStr+="<div>";
   htmlStr+="<button type=\"button\" class=\"btn btn-link\" data-toggle=\"popover\" data-title=\"Code Preview: <kbd>" + result.name + "</kbd>\" data-dismissible=\"true\" data-placement=\"right\" data-content='<div class=\"row\">";
   htmlStr+="<div class=\"col-sm-12\">";
 
   htmlStr+="<h4><b><small>Symbol Definition(s)</small></b></h4>";
   htmlStr+=symbolCodeHtmlStr;
+
 
   htmlStr+="</div>";
   htmlStr+="</div>";
@@ -262,6 +261,8 @@ function renderThumbnail(result,index) {
   htmlStr+="</div>'>";
   htmlStr+="&lt;&sol;&gt; View Code";
   htmlStr+="</button>";
+  htmlStr+="</div>";
+
   htmlStr+="</div>";
   htmlStr+="</a>";
 
@@ -312,36 +313,66 @@ function loadSamples() {
     convert(s,samples[s],"Sample Icon");
   }
 }
-
 loadSamples();
 
-function getSVGDefsToSave() {
-  var svg_defs_to_save="";
-  svg_defs_to_save+="<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
-  svg_defs_to_save+="\r\t<defs>";
+function generateSymbolDefsFile() { // File #1. symbol-defs.svg
+  var symbol_defs_to_save="";
+  symbol_defs_to_save+="<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">";
+  symbol_defs_to_save+="\r\t<defs>";
 
   for(var r in results) {
     var result=results[r];
     var symbolNode=result.symbolCode;
-    svg_defs_to_save+="\r\t\t"+symbolNode;
+    symbol_defs_to_save+="\r\t\t"+symbolNode;
   }
 
-  svg_defs_to_save+="\r\t</defs>";
-  svg_defs_to_save+="\r</svg>";
+  symbol_defs_to_save+="\r\t</defs>";
+  symbol_defs_to_save+="\r</svg>";
+  
+  return symbol_defs_to_save;
+}
+function generateSvgUseJSFile() {
+  let jsScript='!function(){"use strict";if(window&&window.addEventListener){var e,t,n=Object.create(null),o=function(){clearTimeout(t),t=setTimeout(e,100)},i=function(){},r=function(){var e;window.addEventListener("resize",o,!1),window.addEventListener("orientationchange",o,!1),window.MutationObserver?(e=new MutationObserver(o),e.observe(document.documentElement,{childList:!0,subtree:!0,attributes:!0}),i=function(){try{e.disconnect(),window.removeEventListener("resize",o,!1),window.removeEventListener("orientationchange",o,!1)}catch(t){}}):(document.documentElement.addEventListener("DOMSubtreeModified",o,!1),i=function(){document.documentElement.removeEventListener("DOMSubtreeModified",o,!1),window.removeEventListener("resize",o,!1),window.removeEventListener("orientationchange",o,!1)})},u=function(e){function t(e){var t;return void 0!==e.protocol?t=e:(t=document.createElement("a"),t.href=e),t.protocol.replace(/:/g,"")+t.host}var n,o,i;return window.XMLHttpRequest&&(n=new XMLHttpRequest,o=t(location),i=t(e),n=void 0===n.withCredentials&&""!==i&&i!==o?XDomainRequest||void 0:XMLHttpRequest),n},s="http://www.w3.org/1999/xlink";e=function(){function e(){L-=1,0===L&&(i(),r())}function t(e){return function(){n[e.base]!==!0&&(e.isXlink?e.useEl.setAttributeNS(s,"xlink:href","#"+e.hash):e.useEl.setAttribute("href","#"+e.hash))}}function o(t){return function(){var n,o=document.body,i=document.createElement("x");t.onload=null,i.innerHTML=t.responseText,n=i.getElementsByTagName("svg")[0],n&&(n.setAttribute("aria-hidden","true"),n.style.position="absolute",n.style.width=0,n.style.height=0,n.style.overflow="hidden",o.insertBefore(n,o.firstChild)),e()}}function d(t){return function(){t.onerror=null,t.ontimeout=null,e()}}var l,a,c,h,m,w,v,f,E,g,b="",L=0,p=!1;for(i(),E=document.getElementsByTagName("use"),m=0;m<E.length;m+=1){try{a=E[m].getBoundingClientRect()}catch(y){a=!1}h=E[m].getAttribute("href"),h?p=!1:(h=E[m].getAttributeNS(s,"href"),p=!0),f=h&&h.split?h.split("#"):["",""],l=f[0],c=f[1],w=a&&0===a.left&&0===a.right&&0===a.top&&0===a.bottom,a&&0===a.width&&0===a.height&&!w?(b&&!l.length&&c&&!document.getElementById(c)&&(l=b),l.length&&(g=n[l],g!==!0&&setTimeout(t({useEl:E[m],base:l,hash:c,isXlink:p}),0),void 0===g&&(v=u(l),void 0!==v&&(g=new v,n[l]=g,g.onload=o(g),g.onerror=d(g),g.ontimeout=d(g),g.open("GET",l),g.send(),L+=1)))):w?l.length&&n[l]&&setTimeout(t({useEl:E[m],base:l,hash:c,isXlink:p}),0):void 0===n[l]?n[l]=!0:n[l].onload&&(n[l].abort(),delete n[l].onload,n[l]=!0)}E="",L+=1,e()},window.addEventListener("load",function d(){window.removeEventListener("load",d,!1),t=setTimeout(e,0)},!1)}}();';
 
+  return jsScript;  // File #2. svgxuse.min.js
+}
+
+function exportAllIcons() {
+  var file_1_symbol_defs_to_save=generateSymbolDefsFile(); // symbol-defs.svg
+  var file_2_svgxuse_min_js=generateSvgUseJSFile(); // svgxuse.min.js 
+
+  var file_entities=[
+    {
+      "filetype":"image/svg+xml",
+      "filename":"symbol-defs.svg",
+      "filecontent":file_1_symbol_defs_to_save
+    },
+    {
+      "filetype":"application/javascript",
+      "filename":"svgxuse.min.js",
+      "filecontent":file_2_svgxuse_min_js
+    }
+  ];
+  
   if (!window.Blob) {
     alert("Your browser does not support HTML5 'Blob' function required to save a file.");
-  } else {
-    let textblob = new Blob([svg_defs_to_save], {
-        type: "image/svg+xml"
-    });
-    let dwnlnk = document.createElement("a");
-    dwnlnk.download = "symbol-defs.svg";
-    dwnlnk.innerHTML = "Download File";
-    dwnlnk.href = window.URL.createObjectURL(textblob);
-    dwnlnk.style.display = "none";
-    document.body.appendChild(dwnlnk);
+    return;
+  } 
 
+  for(var index in file_entities) {
+    var file_entity=file_entities[index];
+    var textblob = new Blob([file_entity["filecontent"]], {
+        type: file_entity["filetype"]
+    });
+    var dwnlnk=document.createElement("a");
+    dwnlnk.download=file_entity["filename"];
+    dwnlnk.innerHTML="Download File";
+    dwnlnk.href=window.URL.createObjectURL(textblob);
+    dwnlnk.style.display="none";
+    document.body.appendChild(dwnlnk);
     dwnlnk.click();
+    setTimeout(function(e1) {
+      dwnlnk.remove();
+    },2000);
   }
 }

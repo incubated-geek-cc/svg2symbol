@@ -36,13 +36,6 @@ a.card-link:hover,
   font-weight:bolder;
 }
 
-#inputSvgCode {
-  height: 50vh;
-  font-family: consolas;
-  font-size: 10px;
-  margin: 5px 0;
-}
-
 .form-control,a {
   color: #7E18A7;
 }
@@ -85,14 +78,9 @@ a.card-link:hover,
   height: 100px;
   max-width: 100px;
   max-height: 100px;
-  background: #c0c0c0;
+  background: #e0e0e0;
   padding: 10px;
-  margin: 0 auto;
-}
-
-.icon svg {
-  width: 100%;
-  height: 100%;
+  margin: inherit;
 }
 
 html,
@@ -107,7 +95,6 @@ textarea {
 .svg_symbol_defs {
   display:none;
 }
-
 
 pre code,
 .code {
@@ -132,9 +119,24 @@ pre code,
   line-height: 0;
   color:#7E18A7;
 }
+/*
+#profile.navbardrop.dropdown.show {
+  right: 170px;
+}*/
 
+#profile.dropdown .btn.btn-link,
+#profile.dropdown .btn.btn-link:hover,
+#profile.dropdown .btn.btn-link:focus,
+#profile.dropdown .btn.btn-link:active {
+  text-decoration: none;
+  padding: 0;
+}
+
+#profile.dropdown .btn.btn-link:hover {
+  color:#ac50d2;
+}
 #results {
-  height:calc(100vh - 75px);
+  height:calc(100vh - 90px);
   overflow:hidden;
   overflow-x:hidden;
   overflow-y:auto;
@@ -162,34 +164,86 @@ pre code,
 #convertBtn {
   background:#7E18A7;
   border-color:#7E18A7;
-  margin-right:30px;
+  margin-right:5px;
 }
 
-#banner,
-#logo {
-  display:auto;
-  height:50px;
-  margin-right:20px;
+#convertBtn:hover,
+#convertBtn:focus,
+#convertBtn:active {
+  background:#ac50d2;
+  color:#ffffff;
 }
 
-@media only screen and (max-width: 600px) {
-  #banner {
-    display:none;
-  }
-  #logo {
-    margin-right:5px;
-  }
+a.thumbnail,
+a.thumbnail:hover,
+a.thumbnail:active {
+  text-decoration: none;
+  cursor: default;
+  margin-bottom: 0;
+  padding: 0;
+  border-color: #ddd;
+}
+#header-bar,
+#footer-bar {
+  background: #fff;
+  z-index: 999;
+  position: fixed;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.15), inset 0 -1px rgba(255,255,255,0.8);
+  top: 0;
+  margin-right: 0;
+  margin-left: 0;
+  padding: 2.5px;
+  width: 100%;
+  user-select:none;
 }
 
+#footer-bar {
+  top:unset;
+  bottom:0;
+}
+#header-bar table,
+#header-bar table thead,
+#header-bar table tbody,
+#header-bar table tr,
+#header-bar table tr th,
+#header-bar table td {
+  padding:0;
+}
+#header-bar table th {
+  text-align:center;
+  vertical-align: middle;
+}
+#header-bar table td {
+  text-align:left;
+  vertical-align: bottom;
+  padding-left:2px;
+}
+
+#header-bar p,
+#footer-bar p {
+  margin:5px auto;
+}
+#header-bar svg {
+  background:transparent;
+  display:inline-block;
+  width:1em;
+  padding:0;
+  margin:0;
+  fill:currentColor;
+}
+.dropdown-menu>li>a:focus {
+  background-color: #7E18A7;
+  color:#ffffff;
+}
+#yearDisplay {
+  color:#7E18A7;
+}
 .popover {
   position: absolute;
-  top: 130px;
+  top: -100px;
   left: 0;
   z-index: 1060;
   display: none;
-  min-width: 300px;
-  max-width: 80vh;
-  
   overflow:hidden;
   overflow-x:hidden;
   overflow-y:auto;
@@ -213,26 +267,60 @@ pre code,
   border-radius: 6px;
   -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
   box-shadow: 0 5px 10px rgba(0,0,0,.2);
+
+  min-width: 400px;
+  max-width: 600px;
+  max-height:80vh;
 }
 
-a.thumbnail,
-a.thumbnail:hover,
-a.thumbnail:active {
-  text-decoration: none;
-  cursor: default;
-  border-color: #ddd;
-  margin-top: 10px;
-  margin-bottom: 10px;
+#banner {
+  display:auto;
+  height:40px;
+  margin-right:2px;
 }
 
-#header-bar {
-  background: #fff;
-  z-index: 999;
-  position: fixed;
-  box-shadow: 0 1px 10px rgba(0,0,0,0.15), inset 0 -1px rgba(255,255,255,0.8);
-  top: 0;
-  margin-right: 0;
-  margin-left: 0;
-  padding: 2.5px;
-  width: 100%;
+h3.popover-header {
+  font-size: initial;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+span.btn.btn-link.thumbnail-title,
+span.btn.btn-link.thumbnail-title:hover,
+span.btn.btn-link.thumbnail-title:active,
+span.btn.btn-link.thumbnail-title:focus {
+  text-decoration:none;
+  cursor:default;
+  margin-bottom:0;
+  padding:0;
+}
+
+@media only screen and (max-width: 600px) {
+  #banner {
+    display:none;
+  }
+  .popover {
+    min-width: 300px;
+    max-width: 400px;
+    max-height:80vh;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  #banner {
+    display:none;
+  }
+  #header-bar,
+  #footer-bar {
+    padding: 0.5px;
+  }
+  .popover {
+    min-width: 90vw;
+    max-width: 90vw;
+    max-height: 60vh;
+    font-size: 85%;
+  }
+  .btn {
+    font-size: 85%;
+  }
 }
