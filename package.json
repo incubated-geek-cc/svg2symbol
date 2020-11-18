@@ -16,7 +16,6 @@
     "inline-css": "^3.0.0",
     "mustache": "^4.0.1",
     "path": "^0.12.7",
-    "request": "^2.88.2",
     "serve-favicon": "^2.5.0",
     "svg-sprite": "^1.5.0"
   }
