@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Svg2Symbol App</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href='css/offcanvas.css' rel='stylesheet' type='text/css' />
     <link rel="stylesheet" href="css/prism.css">
     <link rel="stylesheet" href="css/custom.css">
   </head>
@@ -54,7 +55,7 @@
                                             <ol>
                                               <li>Within a web app, decide which is the file which renders the interface e.g. <code>index.html</code>. Proceed to embed the file content of <code>symbol-defs.svg</code> within the html file —recommended to be before/after the <code>body</code> tag.</li>
                                               <li>To render an icon:
-                                                <textarea rows="3" class="code" disabled>&lt;svg class&equals;&quot;icon-qrcode&quot;&gt;&NewLine;&Tab;&lt;use xlink&colon;href&equals;&quot;&num;icon-qrcode&quot;&gt;&lt;&sol;use&gt;&NewLine;&lt;&sol;svg&gt;</textarea>
+                                                <textarea rows="3" class="code" disabled>&lt;svg class&equals;&quot;icon icon-qrcode&quot;&gt;&NewLine;&Tab;&lt;use xlink&colon;href&equals;&quot;&num;icon-qrcode&quot;&gt;&lt;&sol;use&gt;&NewLine;&lt;&sol;svg&gt;</textarea>
                                                 <mark>The symbol definitions contain the full</mark> <code>SVG</code> <mark>code of all the icons. Each icon is tagged with a unique</mark> <code>id</code> <mark>. This enables the above code snippet to recognise which icon to render on use.</mark> 
                                               </li>
                                             </ol>
@@ -71,7 +72,7 @@
                                               <li>Place the external SVG file (e.g. symbol-defs.svg) containing the symbol definitions <mark>in the same folder</mark> as the <code>svgxuse</code> JavaScript file.
                                               </li>
                                               <li>To render the an icon:
-                                                <textarea rows="3" class="code" disabled>&lt;svg class&equals;&quot;icon-qrcode&quot;&gt;&NewLine;&Tab;&lt;use xlink&colon;href&equals;&quot;symbol-defs.svg&num;icon-qrcode&quot;&gt;&lt;&sol;use&gt;&NewLine;&lt;&sol;svg&gt;</textarea>
+                                                <textarea rows="3" class="code" disabled>&lt;svg class&equals;&quot;icon icon-qrcode&quot;&gt;&NewLine;&Tab;&lt;use xlink&colon;href&equals;&quot;symbol-defs.svg&num;icon-qrcode&quot;&gt;&lt;&sol;use&gt;&NewLine;&lt;&sol;svg&gt;</textarea>
                                                 <mark>The external SVG filename</mark> <code>symbol-defs.svg</code> <mark>is used as a prefix to reference an icon based on its</mark> <code>id</code>.
                                               <p>For the full documentation, please refer to <b><a href="https://github.com/Keyamoon/svgxuse" target="blank">svgxuse</a>.</p>
                                               </li>
@@ -147,7 +148,8 @@
       </div>
     </div>
 
-    <script type="text/javascript" src="js/polyfill.js"></script>
+    <script src='js/polyfill.js'></script>
+    <script src='js/ie10-viewport-bug-workaround.js'></script>
     <script type="text/javascript" src="js/bootstrap-native.js"></script>
     <script type="text/javascript" src="js/prism.js"></script>
     <script type="text/javascript" src="js/custom.js"></script>
