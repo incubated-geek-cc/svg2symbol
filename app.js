@@ -29,7 +29,7 @@ api.options("/convert-to-symbol", function(req, res) {
     next();
   });
 }, function(req, res) {
-  var spriter = new SVGSpriter({
+  let spriter = new SVGSpriter({
     "log": "verbose",
     "mode": {
       "symbol": {
@@ -39,14 +39,14 @@ api.options("/convert-to-symbol", function(req, res) {
       }
     }
   });
-  var name = `svg-${Math.random()}.svg`;
+  let name = `svg-${Math.random()}.svg`;
   spriter.add(`./${name}`, `${name}`, req.body.svgData);
   spriter.compile(function(error, result) {
     if (error) {
       res.status(503).send(error);
       return;
     }
-    var data = result.symbol.sprite._contents.toString();
+    let data = result.symbol.sprite._contents.toString();
     data = data
       .replace(/></g, ">\n<")
       .replace(/id=""/g, "")
@@ -69,7 +69,7 @@ app.use(express.static(path.join(__dirname, "public")))
 .use("/", routes)
 .use("/api", api)
 .use(function(req, res, next) {
-  var err = new Error("Not Found");
+  let err = new Error("Not Found");
   err.status = 404;
   next(err);
 }).use(function(err, req, res, next) {
