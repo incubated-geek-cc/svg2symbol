@@ -1,20 +1,28 @@
 {
   "name": "svg2symbol",
   "version": "1.0.0",
-  "description": "A browser utility tool to convert svg images into symbols",
+  "description": "A browser utility tool to convert svg images into symbols.",
   "main": "app.js",
   "scripts": {
-  	"start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "16.13.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/incubated-geek-cc/svg2symbol.git"
+    "url": "https://github.com/incubated-geek-cc/svg2symbol.git",
+    "directory": "svg2symbol"
   },
-  "keywords": [],
-  "author": "Charmaine Chui",
-  "license": "ISC",
-  "homepage": "https://github.com/incubated-geek-cc/svg2symbol",
+  "keywords": [
+    "svg",
+    "api",
+    "proxy",
+    "symbols",
+    "icon",
+    "web"
+  ],
+  "author": "geek_cc",
   "dependencies": {
     "body-parser": "^1.19.0",
     "consolidate": "^0.16.0",
