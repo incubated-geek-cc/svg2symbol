@@ -1,6 +1,7 @@
 # svg2symbol
 ## A utility tool to convert your svg images into symbols - Generate your symbol definitions by importing your svg files.
-### Deployed at https://svg2symbol.glitch.me/ (Backup site: https://svg2symbol.onrender.com)
+### Deployed at https://svg2symbol.glitch.me/ 
+### Backup site: https://svg2symbol.onrender.com/
 ### Basic Table of Comparison: Font Icons vs Inline SVG Use
 |   | Font Icon Use | Inline SVG Use  |
 | :------ | :-: | :-: |
